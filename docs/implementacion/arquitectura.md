@@ -6,9 +6,9 @@ Descripción de alto nivel de la arquitectura de backups que empleamos.
 
 Cuando es posible se sigue el [principio 3-2-1](https://objectfirst.com/guides/data-backup/3-2-1-backup-rule-and-strategy/) (tres copias en dos medios distintos con una copia offsite).
 
--   Almacenamiento primario: Se usa cómo primera línea el servicio del proveedor que se esté empleando, cómo el servicio de backups de Linode.
--   Almacenamiento secundario: La arquitectura que se describe a continuación mediante Borgmatic.
--   Almacenamiento off-site: Anualmente cuando se hace la prueba de restauración se hace una copia de los repositorios a un disco duro externo (con los repositorios cifrados)
+- Almacenamiento primario: Se usa cómo primera línea el servicio del proveedor que se esté empleando, cómo el servicio de backups de Linode.
+- Almacenamiento secundario: La arquitectura que se describe a continuación mediante Borgmatic.
+- Almacenamiento off-site: Anualmente cuando se hace la prueba de restauración se hace una copia de los repositorios a un disco duro externo (con los repositorios cifrados)
 
 ## Provisionamiento
 
@@ -30,16 +30,23 @@ Borg cifra y firma los datos antes de que abandonen el servidor de modo que no e
 
 ## Periodicidad y Retención
 
-Una tarea de cron ejecuta la copia con la periodicidad deseada. Habitualmente de lunes a viernes en horario de madrugada según la zona horaria.
+Una tarea de cron ejecuta la copia con la periodicidad deseada. Por defecto martes y jueves en horario de madrugada según la zona horaria. Equivalente a un RPO de 4 días (de dos días si sólo se cuentan laborables)
+
+```yaml
+borgmatic_timer_cron_expression: "30 1 * * 2,4"
+```
 
 Cuando se configura el provisionamiento se intenta que los backups en los servidores sean escalonados para evitar presionar al alojamiento, sobre todo durante los `checks`.
 
 La política de retención se controla directamente a través de la configuración de Borgmatic y la operación de compactación en el almacenamiento.
 
-Habitualmente, mantenemos copia de los cuatro últimos días, las tres últimas semanas, los tres últimos meses y los tres últimos años.
+Por defecto, mantenemos copia de los tres últimos días, las tres últimas semanas, los tres últimos meses y los tres últimos años.
 
 ```yml
-borg_keep_daily: 4
+# A pesar del nombre `keep_daily` no se refiere a días, si no a últimas copias. Con
+# `borg_keep_daily: 3` y un cron de lunes a viernes (`0 22 * * 1-5`), el martes por la
+# mañana estarán almacenadas las copias del lunes, viernes y jueves
+borg_keep_daily: 3
 borg_keep_weekly: 3
 borg_keep_monthly: 3
 borg_keep_yearly: 3
@@ -52,17 +59,17 @@ La verificación de los backups se lleva a cabo mediante la herramienta de [chec
 ```yml
 # https://torsion.org/borgmatic/docs/how-to/deal-with-very-large-backups/
 borgmatic_checks:
-    - name: repository
-      frequency: "4 weeks"
-    - name: archives
-      frequency: "6 weeks"
-    - name: spot
-      frequency: "always"
-      count_tolerance_percentage: 10
-      data_sample_percentage: 1
-      data_tolerance_percentage: 0.5
-    - name: data
-      frequency: "6 months"
+  - name: repository
+    frequency: "4 weeks"
+  - name: archives
+    frequency: "6 weeks"
+  - name: spot
+    frequency: "always"
+    count_tolerance_percentage: 10
+    data_sample_percentage: 1
+    data_tolerance_percentage: 0.5
+  - name: data
+    frequency: "6 months"
 #   Handled as a manual restoration test
 #   - name: extract
 #     frequency: "always"
