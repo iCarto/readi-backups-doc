@@ -1,0 +1,27 @@
+/* https://github.com/squidfunk/mkdocs-material/blob/master/src/templates/assets/stylesheets/main/_colors.scss */
+
+/*
+#00BEC5  verde - azul
+#3E4C5B  negro / gris
+#ffc300 amarillo
+#bee8ff azul claro
+#d5dedf gris claro
+#3e4c5b fondo gris oscuro
+
+
+[data-md-color-scheme="icarto"] {
+    --md-primary-fg-color: #00BEC5;
+    --md-primary-bg-color: #ffc300;
+    --md-footer-fg-color: #fff;
+    --md-footer-bg-color: #00BEC5;
+}
+*/
+.md-typeset img.crop-left-mug {
+    float: left;
+    height: 200px;
+    margin-bottom: 1em;
+    margin-right: 1em;
+    object-fit: cover;
+    object-position: top;
+    width: 200px;
+}
