@@ -1,6 +1,6 @@
 root = true
 
-# [*.{py,js,sh,sql,css,json,yml}]
+# [*.{py,js,sh,sql,css,json,yml,yaml,toml}]
 [*]
 charset=utf-8
 end_of_line=lf
@@ -36,7 +36,6 @@ indent_size = 4
 
 # For shfmt mainly
 [*.sh]
-
 binary_next_line   = true # -bi
 switch_case_indent = true # -ci
 space_redirects    = true # -sr

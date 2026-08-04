@@ -1,51 +1,47 @@
-#!/bin/bash -i
-# We use -i to read .bashrc and have commands like rmvirtualenv available
+#!/usr/bin/env bash
 
 set -euo pipefail
 
 this_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null && pwd)"
 
-PYTHON_VERSION=3.12.2
-PROJECT_NAME="readi-backups-doc"
-
 cd "${this_dir}"/..
+
+PYTHON_VERSION=3.12.2
+PROJECT_NAME=readi-backups-docs
 
 # Clean up
 command -v deactivate && deactivate
 
 : "${PROJECT_NAME}" # checks that project_name exists, if not an unbound variable is raised
 
-# virtualenv commands print weird warnings with set -u
-(set +u && rmvirtualenv "${PROJECT_NAME}")
-
 # Developer Experience Setup
-if ! pyenv versions | grep "${PYTHON_VERSION}" > /dev/null 2>&1; then
-    pyenv update
-    pyenv install "${PYTHON_VERSION}"
-fi
-PYTHON_VERSION_BINARY_PATH="$(pyenv shell "${PYTHON_VERSION}" && pyenv which python)"
+# Installs the version set in .python-version
+# uv python install
+uv python install "${PYTHON_VERSION}"
 
-set +u
-# https://github.com/pexpect/pexpect/commit/71bbdf52ac153c7eaca631637ec96e63de50c2c7
-mkvirtualenv -p "${PYTHON_VERSION_BINARY_PATH}" -a . "${PROJECT_NAME}" || true
-set -u
+# Removes if exists and creates the virtualenv in .venv
+uv venv --clear
 
-if ! command -v deactivate; then
-    echo "Not in a virtualenv. Can not continue."
-    exit 1
-fi
+# No need to do this here
+# source .venv/bin/activate
 
-# Para algunos plugins
-sudo apt install libcairo2-dev libfreetype6-dev libffi-dev libjpeg-dev libpng-dev libz-dev pngquant
+# backend and dev dependencies
+uv sync
 
-python -m pip install --upgrade pip
-python -m pip install --upgrade build
-pip install -r requirements.txt
-pip install -r requirements-dev.txt
+# System deps for mkdocs-material[imaging]
+sudo apt install --yes libcairo2-dev libfreetype6-dev libffi-dev libjpeg-dev libpng-dev libz-dev pngquant
 
 npm install
-pre-commit clean
-pre-commit gc
-pre-commit install --install-hooks --overwrite
+uv run prek uninstall --refresh
+uv run prek cache clean --config .pre-commit-config.yaml
+uv run prek cache gc --config .pre-commit-config.yaml
+uv run prek install --install-hooks --overwrite --refresh --config .pre-commit-config.yaml
+uv run prek validate-config --verbose .pre-commit-config.yaml
 
-echo "* DONE :)"
+mkdir -p .cache/
+
+echo "* DONE :)
+
+Activate the virtualenv with:
+source .venv/bin/activate
+"

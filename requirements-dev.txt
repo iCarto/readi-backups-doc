@@ -1,5 +1,0 @@
-ruff==0.5.6
-pre-commit==3.8.0
-python-frontmatter==1.1.0
-# ipdb==0.13.13
-# ipython==8.12.0

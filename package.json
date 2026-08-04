@@ -3,9 +3,10 @@
     "devDependencies": {
         "markdownlint-cli2": "0.14.0",
         "markdownlint-cli2-formatter-pretty": "0.0.7",
-        "prettier": "3.3.3"
-    },
-    "dependencies": {
-        "markdownlint": "0.35.0"
+        "prettier": "3.7.4",
+        "stylelint": "16.3.1",
+        "stylelint-config-html": "1.1.0",
+        "stylelint-config-standard": "36.0.0",
+        "stylelint-order": "6.0.4"
     }
 }

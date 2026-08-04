@@ -1,18 +1,30 @@
 fail_fast: false
 repos:
-    - repo: https://github.com/astral-sh/ruff-pre-commit
-      # Ruff version.
-      rev: v0.5.6
+    # See https://pre-commit.com/hooks.html for more hooks
+
+    - repo: "https://github.com/pre-commit/pre-commit-hooks"
+      rev: v6.0.0
       hooks:
-          # Run the linter.
-          - id: ruff
-            types_or: [python, pyi, jupyter]
-            args: [--fix]
-            verbose: true
-          # Run the formatter.
-          - id: ruff-format
-            types_or: [python, pyi, jupyter]
-            verbose: true
+          - id: check-merge-conflict
+          - id: check-added-large-files
+            args:
+                [--maxkb=1024]
+
+                # - repo: https://github.com/astral-sh/ruff-pre-commit
+                #   # Ruff version.
+                #   rev: v0.14.14
+                #   hooks:
+                #       # Run the linter.
+                #       - id: ruff-check
+                #         args: [--fix]
+                #         verbose: false
+                #         priority: 20
+
+                #       # Run the formatter.
+                #       - id: ruff-format
+                #         verbose: false
+                #         priority: 10
+
     - repo: local
       hooks:
           - id: prettier
@@ -21,15 +33,17 @@ repos:
             args: [--write, --ignore-path, .ignore]
             language: system
             types: [file]
-            files: \.(js|json|md|vue|yaml|yml)$ # html
-            verbose: true
+            files: \.(js|jsx|ts|tsx|json|md|vue|yaml|yml)$ # html
+            verbose: false
+            priority: 10
 
           - id: "markdownlint-cli2"
             name: "markdownlint-cli2"
             entry: npx markdownlint-cli2
             language: system
             types: [markdown]
-            verbose: true
+            verbose: false
+            priority: 20
 
           - id: shfmt
             name: shfmt
@@ -37,11 +51,13 @@ repos:
             args: [-l, -w]
             language: system
             types: [shell]
-            verbose: true
+            verbose: false
+            priority: 10
 
           - id: shellcheck
             name: shellcheck
             entry: shellcheck
             language: system
             types: [shell]
-            verbose: true
+            verbose: false
+            priority: 20

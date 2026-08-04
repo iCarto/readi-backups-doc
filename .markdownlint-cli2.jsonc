@@ -1,14 +1,10 @@
+//https://github.com/DavidAnson/markdownlint/blob/main/doc/md033.md
 {
     "config": {
         "extends": "markdownlint/style/prettier",
-        "list-marker-space": {
-            "ul_multi": 3,
-            "ul_single": 3
-        },
-        "ul-indent": {
-            "indent": 4
-        },
+        // allows inline html
         "MD033": false,
-        "MD034": false
-    }
+        // allows bare url
+        "MD034": false,
+    },
 }

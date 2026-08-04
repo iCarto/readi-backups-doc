@@ -1,5 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -euo pipefail
 
-mkdocs serve
+uv run mkdocs serve
